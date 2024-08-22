@@ -1,9 +1,12 @@
 import express from "express"
 import connectDB from "./config/db.js"
-import router from "./router/router.js"
+import veterinariosRoutes from "./routes/veterinarioRoutes.js"
 
 //Instanciamos express
 const server = express()
+
+//Activamos el body parser para leer peticiones desde la req
+server.use(express.json())
 
 //Nos conectamos a la db
 connectDB();
@@ -16,4 +19,4 @@ server.listen(port, () => {
 })
 
 //Usamos el la instancia del router para crear las rutas 
-server.use("/", router)
+server.use("/api/veterinarios", veterinariosRoutes)
