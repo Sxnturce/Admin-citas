@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import xss from "xss"
 import bcryptjs from "bcryptjs"
 import token from "../helpers/generateToken.js";
 
@@ -43,7 +44,9 @@ veterinarioScheme.pre("save", async function (next) {
   }
 
   const salt = bcryptjs.genSaltSync(10);
-  this.password = bcryptjs.hashSync(this.password, salt);
+  const password = xss(this.password)
+  this.password = bcryptjs.hashSync(password, salt);
+  next();
 })
 
 const Veterinario = mongoose.model("Veterinario", veterinarioScheme);
