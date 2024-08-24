@@ -6,7 +6,9 @@ const checkAuth = async (req, res, next) => {
   const authHeader = req.header("authorization")
 
   //Comprobamos si hay algun y si no empieza con Bearer
-  if (!authHeader && !authHeader.startsWith("Bearer")) {
+  if (!authHeader) {
+    return res.status(404).json({ msg: "Token inexistente" })
+  } else if (!authHeader.startsWith("Bearer")) {
     return res.status(404).json({ msg: "Token inexistente" })
   }
 
