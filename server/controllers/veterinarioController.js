@@ -18,7 +18,7 @@ export const register = async (req, res) => {
     }
     return;
   }
-  res.status(400).json({ msg: "Error el usuario ya existe" })
+  res.status(400).json({ msg: "El email ya esta verificado" })
 }
 
 

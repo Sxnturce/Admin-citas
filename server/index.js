@@ -1,4 +1,5 @@
 import express from "express"
+import cors from "cors"
 import connectDB from "./config/db.js"
 import veterinariosRoutes from "./routes/veterinarioRoutes.js"
 import pacientesRouter from "./routes/pacienteRoutes.js"
@@ -11,6 +12,21 @@ server.use(express.json())
 
 //Nos conectamos a la db
 connectDB();
+
+//Asignamos cors para permitir la conexion de url y con el backend
+const dominiosAdd = ["http://localhost:5173"]
+
+const corsOptions = {
+  origin: function (origin, cb) {
+    if (dominiosAdd.indexOf(origin) !== -1) {
+      cb(null, true);
+    } else {
+      cb(new Error("No permitido por cors"))
+    }
+  }
+}
+
+server.use(cors(corsOptions))
 
 //Asignamos un puerto
 const port = process.env.PORT || 4000
