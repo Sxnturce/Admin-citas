@@ -14,7 +14,7 @@ server.use(express.json())
 connectDB();
 
 //Asignamos cors para permitir la conexion de url y con el backend
-const dominiosAdd = ["http://localhost:5173"]
+const dominiosAdd = [`${process.env.FRONTEND_URL}`]
 
 const corsOptions = {
   origin: function (origin, cb) {

@@ -1,10 +1,11 @@
 import Veterinario from "../models/Veterinario.js"
 import generateJWT from "../helpers/generateJWT.js"
+import emailRegistro from "../helpers/emailRegistro.js"
 import generateToken from "../helpers/generateToken.js"
 import bcryptjs from "bcryptjs"
 
 export const register = async (req, res) => {
-  const { nombre, email, password, token } = req.body
+  const { nombre, email } = req.body
 
   const exist = await Veterinario.findOne({ email }).exec()
 
@@ -12,6 +13,14 @@ export const register = async (req, res) => {
     try {
       const veterinario = new Veterinario(req.body)
       const saveUser = await veterinario.save()
+
+      //Enviar email para confirmar la cuenta
+      emailRegistro({
+        email,
+        nombre,
+        token: saveUser.token
+      })
+
       res.json(saveUser)
     } catch (e) {
       res.status(400).json({ msg: "Error al crear un usuario" })
@@ -27,7 +36,7 @@ export const confirmar = async (req, res) => {
   try {
     const user = await Veterinario.findOne({ token }).exec()
     if (!user) {
-      const error = new Error("El token no es valido 😿")
+      const error = new Error("El token expiro o no es valido 😿")
       return res.status(404).json({ msg: error.message })
     }
 
@@ -35,7 +44,7 @@ export const confirmar = async (req, res) => {
     user.token = null
     await user.save()
 
-    res.json({ msg: user })
+    res.json({ msg: "Confirmado correctamente" })
   } catch (e) {
     res.status(500).json({ msg: "Error al autenticar el usuario" })
   }

@@ -37,6 +37,12 @@ function Register() {
 			setErrPass("La contraseña es obligatorio");
 			return;
 		}
+
+		if (!pass.trim().length >= 6) {
+			setErrPass("La contraseña es muy corta");
+			return;
+		}
+
 		if (!repet.trim()) {
 			setErrRepet("La contraseña es obligatoria");
 			return;

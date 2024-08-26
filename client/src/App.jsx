@@ -12,7 +12,7 @@ function App() {
 				<Route path="/" element={<AuthLayout />}>
 					<Route index element={<Login />} />
 					<Route path="registrar" element={<Register />} />
-					<Route path="confirmar/:id" element={<ConfirmAccount />} />
+					<Route path="confirmar/:token" element={<ConfirmAccount />} />
 					<Route path="olvide-password" element={<ForgotPassword />} />
 				</Route>
 				<Route path="*" element={<Navigate to="/" />} />
