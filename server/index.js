@@ -14,10 +14,15 @@ server.use(express.json())
 connectDB();
 
 //Asignamos cors para permitir la conexion de url y con el backend
-const dominiosAdd = [`${process.env.FRONTEND_URL}`]
+const dominiosAdd = [process.env.FRONTEND_URL]
 
 const corsOptions = {
   origin: function (origin, cb) {
+
+    if (!origin) {//for bypassing postman req with  no origin
+      return cb(null, true);
+    }
+
     if (dominiosAdd.indexOf(origin) !== -1) {
       cb(null, true);
     } else {

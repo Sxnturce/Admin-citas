@@ -1,6 +1,6 @@
 import { redirect, useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import clientAxios from "../../config/axios";
 import Alerta from "../../components/Alerta";
 
 function ConfirmAccount() {
@@ -16,8 +16,8 @@ function ConfirmAccount() {
 
 		const confirmAccount = async () => {
 			try {
-				const url = `http://localhost:4000/api/veterinarios/confirmar/${token}`;
-				const { data } = await axios.get(url);
+				const url = `/veterinarios/confirmar/${token}`;
+				const { data } = await clientAxios.get(url);
 				setAlert({
 					msg: data.msg,
 					type: true,

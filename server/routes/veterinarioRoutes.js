@@ -7,7 +7,7 @@ import {
   forgotPass,
   comprobarToken,
   newPass
-} from "../controllers/VeterinarioController.js"
+} from "../controllers/veterinarioController.js"
 import checkAuth from "../middleware/authMiddleware.js"
 
 const router = express.Router()

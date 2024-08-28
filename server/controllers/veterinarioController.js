@@ -1,6 +1,7 @@
 import Veterinario from "../models/Veterinario.js"
 import generateJWT from "../helpers/generateJWT.js"
 import emailRegistro from "../helpers/emailRegistro.js"
+import emailOlvidePassword from "../helpers/emailOlvidePassword.js"
 import generateToken from "../helpers/generateToken.js"
 import bcryptjs from "bcryptjs"
 
@@ -56,33 +57,33 @@ export const auth = async (req, res) => {
     //Comprobamos si correo existe
     const user = await Veterinario.findOne({ email }).exec();
     if (!user) {
-      return res.status(404).json({ msg: "Correo no registrado" })
+      return res.status(404).json({ msg: "Email no registrado" })
     }
 
     //Comprobamos si el usuario esta confirmado
     const isAuth = user.confirmado
     if (!isAuth) {
-      res.status(403).json({ msg: "El usuario no confirmo su cuenta 😔" })
+      res.status(401).json({ msg: "El usuario no confirmo su cuenta 😔" })
       return
     }
 
     //Comprobamos si la password es correcta
     const pass = bcryptjs.compareSync(password, user.password)
     if (!pass) {
-      return res.status(403).json("La contraseña no es correcta")
+      return res.status(403).json({ msg: "La contraseña no es correcta" })
     }
 
     //Generamos un JWT con el id del usuario
     res.json({ token: generateJWT(user.id) })
 
   } catch (error) {
-    return res.status(403).json(`Error en la autenticación ${error}`)
+    return res.status(400).json({ msg: "Error en la autenticación" })
   }
 }
 
 export const perfil = (req, res) => {
   const { veterinario } = req
-  res.json({ perfil: veterinario })
+  res.json(veterinario)
 }
 
 export const forgotPass = async (req, res) => {
@@ -92,10 +93,19 @@ export const forgotPass = async (req, res) => {
     if (!user) {
       return res.status(404).json({ msg: "El correo electronico no existe" })
     }
-    user.token ??= generateToken();
+    user.token = generateToken();
     await user.save();
 
-    res.json({ user })
+    //Desestructuramos ya que para este punto el correo ya fue confirmado como existente
+    const { email: Email, nombre, token } = user
+    emailOlvidePassword({
+      email: Email,
+      nombre,
+      token
+    })
+
+    //Mensaje de aviso si todo salio como lo esperado
+    res.json({ msg: "Hemos enviado un email con instrucciones" })
   } catch (e) {
     return res.status(400).json({ msg: "Error al solicitar el usuario" })
   }
@@ -108,7 +118,7 @@ export const comprobarToken = async (req, res) => {
     if (!user) {
       return res.status(404).json({ msg: "El token no  existe" })
     }
-    res.json({ user })
+    res.json({ msg: "El token fue confirmado" })
   } catch (e) {
     return res.status(400).json({ msg: "Error token no valido" })
   }
